@@ -1,0 +1,135 @@
+name: Full API Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+
+  # ---------------------------------------------------
+  # JOB 1 - SMOKE TESTS
+  # ---------------------------------------------------
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      - name: Create Reports Directory
+        run: mkdir -p reports
+
+      - name: Run Smoke Tests
+        run: |
+          newman run ./tests/Smoke.postman_collection.json \
+            -e ./tests/Assessment_Dev.postman_environment.json \
+            --env-var "baseUrl=${{ secrets.REQRES_BASE_URL }}" \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export ./reports/smoke-report.html
+
+      - name: Upload Smoke Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-report
+          path: reports/smoke-report.html
+
+  # ---------------------------------------------------
+  # JOB 2 - REGRESSION TESTS
+  # ---------------------------------------------------
+  regression-tests:
+    name: Regression Tests
+    needs: smoke-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      - name: Create Reports Directory
+        run: mkdir -p reports
+
+      # -----------------------------
+      # Phase 1 Collection
+      # -----------------------------
+      - name: Run Phase 1 Regression Tests
+        run: |
+          newman run ./tests/Phase_1.postman_collection.json \
+            -e ./tests/Assessment_Dev.postman_environment.json \
+            --env-var "baseUrl=${{ secrets.REQRES_BASE_URL }}" \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export ./reports/phase1-report.html
+
+      - name: Upload Phase 1 Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase1-report
+          path: reports/phase1-report.html
+
+      # -----------------------------
+      # Phase 2 Collection
+      # -----------------------------
+      - name: Run Phase 2 Tests
+        run: |
+          newman run ./tests/Phase_2.postman_collection.json \
+            -e ./tests/Assessment_Dev.postman_environment.json \
+            --env-var "baseUrl=${{ secrets.REQRES_BASE_URL }}" \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export ./reports/phase2-report.html
+
+      - name: Upload Phase 2 Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-report
+          path: reports/phase2-report.html
+
+  # ---------------------------------------------------
+  # JOB 3 - PIPELINE SUMMARY
+  # ---------------------------------------------------
+  pipeline-summary:
+    name: Pipeline Summary
+    needs:
+      - smoke-tests
+      - regression-tests
+
+    if: always()
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Pipeline Summary
+        run: |
+          echo "Pipeline complete."
+          echo "Smoke: ${{ needs.smoke-tests.result }}"
+          echo "Regression: ${{ needs.regression-tests.result }}"
