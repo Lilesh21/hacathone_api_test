@@ -1,0 +1,2659 @@
+{
+  "info": {
+    "_postman_id": "d8737396-9bcb-46ff-bbdd-7161ebaabeaa",
+    "name": "API_Assessment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54612988",
+    "_collection_link": "https://go.postman.co/collection/54612988-d8737396-9bcb-46ff-bbdd-7161ebaabeaa?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Phase1",
+      "item": [
+        {
+          "name": "Request_A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Capture token in authToken\", function() {\r",
+                  "    pm.environment.set(\"authToken\", jsonData.token);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "free_user_3DvaA58Pg6H9iwHHzWGmoB6llWq",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"eve.holt@reqres.in\",\r\n    \"password\":\"cityslicka\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "pm.test(\"Check token\", function() {\r",
+                  "    pm.expect(jsonData.token).to.eql(pm.environment.get(\"authToken\"));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"eve.holt@reqres.in\",\r\n    \"password\":\"pistol\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request C",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User details are correct\", function () {\r",
+                  "    \r",
+                  "    pm.expect(jsonData.data.email).to.eql(\"janet.weaver@reqres.in\");\r",
+                  "    pm.expect(jsonData.data.first_name).to.eql(\"Janet\");\r",
+                  "    pm.expect(jsonData.data.last_name).to.eql(\"Weaver\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tokenExpiry = pm.environment.get(\"tokenExpiry\");\r",
+                  "const now = Date.now();\r",
+                  "\r",
+                  "// Check whether token is missing or expired\r",
+                  "if (!tokenExpiry || Number(tokenExpiry) < now) {\r",
+                  "\r",
+                  "    console.log(\"Token expired or missing — generating new token\");\r",
+                  "\r",
+                  "    pm.sendRequest({\r",
+                  "        url: pm.environment.get(\"baseUrl\") + \"/api/login\",\r",
+                  "        method: \"POST\",\r",
+                  "        header: {\r",
+                  "            \"Content-Type\": \"application/json\",\r",
+                  "            \"x-api-key\": pm.environment.get(\"x-api-key\")\r",
+                  "        },\r",
+                  "        body: {\r",
+                  "            mode: \"raw\",\r",
+                  "            raw: JSON.stringify({\r",
+                  "                email: \"eve.holt@reqres.in\",\r",
+                  "                password: \"cityslicka\"\r",
+                  "            })\r",
+                  "        }\r",
+                  "    }, function (err, res) {\r",
+                  "\r",
+                  "        if (err) {\r",
+                  "            console.log(\"Error during login request:\", err);\r",
+                  "            return;\r",
+                  "        }\r",
+                  "\r",
+                  "        const responseJson = res.json();\r",
+                  "\r",
+                  "        // Save token in environment\r",
+                  "        pm.environment.set(\"token\", responseJson.token);\r",
+                  "\r",
+                  "        // Save expiry time (1 hour from now)\r",
+                  "        pm.environment.set(\r",
+                  "            \"tokenExpiry\",\r",
+                  "            Date.now() + 3600000\r",
+                  "        );\r",
+                  "\r",
+                  "        console.log(\"New token saved successfully\");\r",
+                  "    });\r",
+                  "\r",
+                  "} else {\r",
+                  "\r",
+                  "    console.log(\"Token valid — skipping refresh\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request D",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Check response details\", function() {\r",
+                  "    pm.expect(jsonData.name).to.eql(\"AssessmentEngineer\");\r",
+                  "    pm.expect(jsonData.job).to.eql(\"Senior QA\");\r",
+                  "    pm.expect(jsonData.id).to.be.a(\"string\");\r",
+                  "    pm.expect(jsonData.name).to.eql(\"AssessmentEngineer\");\r",
+                  "    pm.expect(jsonData.createdAt).to.not.be.undefined;\r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.set(\"createdUserId\", jsonData.id);\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"AssessmentEngineer\",\r\n    \"job\":\"Senior QA\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "wrongPassword",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body contains error field\", function() {\r",
+                  "    pm.expect(jsonData).to.have.property(\"error\")\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check error value\", function() {\r",
+                  "    pm.expect(jsonData.error).to.be.eql(\"user not found\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body does not contain token\", function() {\r",
+                  "    pm.expect(jsonData).to.not.have.property(\"token\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"peter@klaven@reqres.in\",\r\n    \"password\":\"cityslicka\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "missingPassword",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Check error value\", function() {\r",
+                  "    pm.expect(jsonData.error).to.be.eql(\"Missing password\");\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"eve.holt@reqres.in\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "emptyJson",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Error field exist and non-empty\", function() {\r",
+                  "    pm.expect(jsonData.error).to.not.be.undefined;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error field is non-empty\", function() {\r",
+                  "    pm.expect(jsonData.error).to.not.eql(\"\");\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "invalidToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Content-Type header is correct\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json; charset=utf-8\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "INVALID.TOKEN.STRING",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "wrongUser",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body equals {}\", function() {\r",
+                  "    pm.expect(jsonData).to.deep.equal({});\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_J",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.environment.set('createdUserId',jsonData.id); \r",
+                  "\r",
+                  "pm.environment.set('createTimestamp',jsonData.createdAt);\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body contains values\", function() {\r",
+                  "    pm.expect(jsonData.name).to.be.eql(\"LifecycleTester\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check ID is a string\", function() {\r",
+                  "    pm.expect(jsonData.id).to.be.a('string');\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"LifecycleTester\",\r\n    \"job\":\"QA Lead\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_K",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Validate GET /api/users/2 response schema\", function () {\r",
+                  "    const schema = {\r",
+                  "        type: \"object\",\r",
+                  "        required: [\"data\"],\r",
+                  "        properties: {\r",
+                  "            data: {\r",
+                  "                type: \"object\",\r",
+                  "                required: [\r",
+                  "                    \"id\",\r",
+                  "                    \"email\",\r",
+                  "                    \"first_name\",\r",
+                  "                    \"last_name\",\r",
+                  "                    \"avatar\"\r",
+                  "                ],\r",
+                  "                properties: {\r",
+                  "                    id: {\r",
+                  "                        type: \"integer\"\r",
+                  "                    },\r",
+                  "                    email: {\r",
+                  "                        type: \"string\",\r",
+                  "                        pattern: \"^[\\\\w.-]+@[\\\\w.-]+\\\\.[A-Za-z]{2,}$\"\r",
+                  "                    },\r",
+                  "                    first_name: {\r",
+                  "                        type: \"string\",\r",
+                  "                        minLength: 1\r",
+                  "                    },\r",
+                  "                    last_name: {\r",
+                  "                        type: \"string\",\r",
+                  "                        minLength: 1\r",
+                  "                    },\r",
+                  "                    avatar: {\r",
+                  "                        type: \"string\",\r",
+                  "                        format: \"uri\"\r",
+                  "                    }\r",
+                  "                }\r",
+                  "            }\r",
+                  "        }\r",
+                  "    };\r",
+                  "\r",
+                  "    pm.response.to.have.jsonSchema(schema);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check mail\", function() {\r",
+                  "    pm.expect(pm.response.json().data.email).to.match(/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_L",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check response\", function() {\r",
+                  "    pm.expect(jsonData.name).to.be.eql(\"LifecycleTester\");\r",
+                  "    pm.expect(jsonData.job).to.be.eql(\"Senior QA Lead\");\r",
+                  "});\r",
+                  "\r",
+                  "const isoPattern = /^\\d{4}-\\d{2}-\\d{2}T/;\r",
+                  "pm.test(\"Check time format\", function() {\r",
+                  "    pm.expect(jsonData.updatedAt).to.match(isoPattern);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"LifecycleTester\",\r\n    \"job\":\"Senior QA Lead\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_M",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Check response\", function() {\r",
+                  "    pm.expect(jsonData.job).to.be.eql(\"Principal QA\");\r",
+                  "});\r",
+                  "\r",
+                  "const isoPattern = /^\\d{4}-\\d{2}-\\d{2}T/;\r",
+                  "\r",
+                  "pm.test(\"Check ISO pattern\", function() {\r",
+                  "    pm.expect(jsonData.updatedAt).to.match(isoPattern);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check if name is there in json\", function() {\r",
+                  "    pm.expect(jsonData.name).to.be.undefined\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"job\":\"Principal QA\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_N",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check response\", function(){\r",
+                  "    pm.expect(pm.response.text()).to.be.eql(\"\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.sendRequest({\r",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/api/users/2\",\r",
+                  "    method: \"GET\",\r",
+                  "    header: {\r",
+                  "        \"x-api-key\": \"free_user_3Dn9moIygPJQjTd16tLjjDwIFPQ\"\r",
+                  "    }\r",
+                  "},  function(err, res) {\r",
+                  "    pm.test(\"GET after DELETE\", function() {\r",
+                  "        pm.expect(res.code).to.eql(200);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phase2",
+      "item": [
+        {
+          "name": "Request_O",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Validate FakeStore response schema\", function () {\r",
+                  "\r",
+                  "    const schema = {\r",
+                  "        \"type\": \"object\",\r",
+                  "\r",
+                  "        \"required\": [\r",
+                  "            \"id\",\r",
+                  "            \"title\",\r",
+                  "            \"price\",\r",
+                  "            \"description\",\r",
+                  "            \"category\",\r",
+                  "            \"image\",\r",
+                  "            \"rating\"\r",
+                  "        ],\r",
+                  "\r",
+                  "        \"properties\": {\r",
+                  "\r",
+                  "            \"id\": {\r",
+                  "                \"type\": \"integer\"\r",
+                  "            },\r",
+                  "\r",
+                  "            \"title\": {\r",
+                  "                \"type\": \"string\",\r",
+                  "                \"minLength\": 1\r",
+                  "            },\r",
+                  "\r",
+                  "            \"price\": {\r",
+                  "                \"type\": \"number\",\r",
+                  "                \"exclusiveMinimum\": 0\r",
+                  "            },\r",
+                  "\r",
+                  "            \"description\": {\r",
+                  "                \"type\": \"string\"\r",
+                  "            },\r",
+                  "\r",
+                  "            \"category\": {\r",
+                  "                \"type\": \"string\"\r",
+                  "            },\r",
+                  "\r",
+                  "            \"image\": {\r",
+                  "                \"type\": \"string\",\r",
+                  "                \"format\": \"uri\"\r",
+                  "            },\r",
+                  "\r",
+                  "            \"rating\": {\r",
+                  "                \"type\": \"object\",\r",
+                  "\r",
+                  "                \"required\": [\r",
+                  "                    \"rate\",\r",
+                  "                    \"count\"\r",
+                  "                ],\r",
+                  "\r",
+                  "                \"properties\": {\r",
+                  "\r",
+                  "                    \"rate\": {\r",
+                  "                        \"type\": \"number\",\r",
+                  "                        \"minimum\": 0,\r",
+                  "                        \"maximum\": 5\r",
+                  "                    },\r",
+                  "\r",
+                  "                    \"count\": {\r",
+                  "                        \"type\": \"integer\",\r",
+                  "                        \"minimum\": 0\r",
+                  "                    }\r",
+                  "                }\r",
+                  "            }\r",
+                  "        }\r",
+                  "    };\r",
+                  "\r",
+                  "    pm.response.to.have.jsonSchema(schema);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://fakestoreapi.com/products/1",
+              "protocol": "https",
+              "host": [
+                "fakestoreapi",
+                "com"
+              ],
+              "path": [
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_P",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const products = pm.response.json();\r",
+                  "\r",
+                  "const productSchema = {\r",
+                  "    \"type\": \"object\",\r",
+                  "\r",
+                  "    \"required\": [\r",
+                  "        \"id\",\r",
+                  "        \"title\",\r",
+                  "        \"price\",\r",
+                  "        \"description\",\r",
+                  "        \"category\",\r",
+                  "        \"image\",\r",
+                  "        \"rating\"\r",
+                  "    ],\r",
+                  "\r",
+                  "    \"properties\": {\r",
+                  "\r",
+                  "        \"id\": {\r",
+                  "            \"type\": \"integer\"\r",
+                  "        },\r",
+                  "\r",
+                  "        \"title\": {\r",
+                  "            \"type\": \"string\",\r",
+                  "            \"minLength\": 1\r",
+                  "        },\r",
+                  "\r",
+                  "        \"price\": {\r",
+                  "            \"type\": \"number\",\r",
+                  "            \"exclusiveMinimum\": 0\r",
+                  "        },\r",
+                  "\r",
+                  "        \"description\": {\r",
+                  "            \"type\": \"string\"\r",
+                  "        },\r",
+                  "\r",
+                  "        \"category\": {\r",
+                  "            \"type\": \"string\"\r",
+                  "        },\r",
+                  "\r",
+                  "        \"image\": {\r",
+                  "            \"type\": \"string\",\r",
+                  "            \"format\": \"uri\"\r",
+                  "        },\r",
+                  "\r",
+                  "        \"rating\": {\r",
+                  "            \"type\": \"object\",\r",
+                  "\r",
+                  "            \"required\": [\r",
+                  "                \"rate\",\r",
+                  "                \"count\"\r",
+                  "            ],\r",
+                  "\r",
+                  "            \"properties\": {\r",
+                  "\r",
+                  "                \"rate\": {\r",
+                  "                    \"type\": \"number\",\r",
+                  "                    \"minimum\": 0,\r",
+                  "                    \"maximum\": 5\r",
+                  "                },\r",
+                  "\r",
+                  "                \"count\": {\r",
+                  "                    \"type\": \"integer\",\r",
+                  "                    \"minimum\": 0\r",
+                  "                }\r",
+                  "            }\r",
+                  "        }\r",
+                  "    }\r",
+                  "};\r",
+                  "\r",
+                  "pm.test(\"Products array length is 20\", function () {\r",
+                  "    pm.expect(products.length).to.eql(20);\r",
+                  "});\r",
+                  "\r",
+                  "products.forEach(function (product) {\r",
+                  "\r",
+                  "    pm.test(\"Product \" + product.id + \" schema valid\", function () {\r",
+                  "\r",
+                  "        pm.expect(product).to.have.jsonSchema(productSchema);\r",
+                  "\r",
+                  "    });\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://fakestoreapi.com/products",
+              "protocol": "https",
+              "host": [
+                "fakestoreapi",
+                "com"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_Q",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array of length 4\", function () {\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "    pm.expect(json.length).to.eql(4);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains all expected categories\", function () {\r",
+                  "\r",
+                  "    pm.expect(json).to.include.members([\r",
+                  "        \"electronics\",\r",
+                  "        \"jewelery\",\r",
+                  "        \"men's clothing\",\r",
+                  "        \"women's clothing\"\r",
+                  "    ]);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://fakestoreapi.com/products/categories",
+              "protocol": "https",
+              "host": [
+                "fakestoreapi",
+                "com"
+              ],
+              "path": [
+                "products",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request_R",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();\r",
+                  "\r",
+                  "const schema = {\r",
+                  "    \"type\": \"object\",\r",
+                  "\r",
+                  "    \"required\": [\r",
+                  "        \"page\",\r",
+                  "        \"per_page\",\r",
+                  "        \"total\",\r",
+                  "        \"total_pages\",\r",
+                  "        \"data\",\r",
+                  "        \"support\"\r",
+                  "    ],\r",
+                  "\r",
+                  "    \"properties\": {\r",
+                  "\r",
+                  "        \"page\": {\r",
+                  "            \"type\": \"integer\"\r",
+                  "        },\r",
+                  "\r",
+                  "        \"per_page\": {\r",
+                  "            \"type\": \"integer\"\r",
+                  "        },\r",
+                  "\r",
+                  "        \"total\": {\r",
+                  "            \"type\": \"integer\",\r",
+                  "            \"enum\": [12]\r",
+                  "        },\r",
+                  "\r",
+                  "        \"total_pages\": {\r",
+                  "            \"type\": \"integer\",\r",
+                  "            \"enum\": [2]\r",
+                  "        },\r",
+                  "\r",
+                  "        \"data\": {\r",
+                  "            \"type\": \"array\",\r",
+                  "            \"minItems\": 1,\r",
+                  "            \"maxItems\": 6\r",
+                  "        },\r",
+                  "\r",
+                  "        \"support\": {\r",
+                  "            \"type\": \"object\",\r",
+                  "\r",
+                  "            \"required\": [\r",
+                  "                \"url\",\r",
+                  "                \"text\"\r",
+                  "            ],\r",
+                  "\r",
+                  "            \"properties\": {\r",
+                  "\r",
+                  "                \"url\": {\r",
+                  "                    \"type\": \"string\"\r",
+                  "                },\r",
+                  "\r",
+                  "                \"text\": {\r",
+                  "                    \"type\": \"string\"\r",
+                  "                }\r",
+                  "            }\r",
+                  "        }\r",
+                  "    }\r",
+                  "};\r",
+                  "\r",
+                  "pm.test(\"Pagination response schema is valid\", function () {\r",
+                  "\r",
+                  "    pm.response.to.have.jsonSchema(schema);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"per_page * total_pages >= total\", function () {\r",
+                  "\r",
+                  "    pm.expect(\r",
+                  "        jsonData.per_page * jsonData.total_pages\r",
+                  "    ).to.be.at.least(jsonData.total);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{xApiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://reqres.in/api/users?page=1",
+              "protocol": "https",
+              "host": [
+                "reqres",
+                "in"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phase3",
+      "item": [
+        {
+          "name": "Cross_AP_Integration_Chains",
+          "item": [
+            {
+              "name": "Chain_Step5",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "});\r",
+                      "\r",
+                      "var jsonData = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Check return ID\", function() {\r",
+                      "    pm.expect(jsonData.id).to.be.eql(101);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Body contains cheapesttitle\", function() {\r",
+                      "    pm.expect(jsonData.body).to.include(\r",
+                      "        pm.environment.get(\"cheapestTitle\")\r",
+                      "    );\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"title\":\"Order Summary\",\r\n    \"body\":\"Cart ID: {{cartId}} | Product: {{cheapestTitle}} | Price:${{cheapestPrice}} | Auth tokens: Reqres[{{authToken}}] Store[{{storeToken}}]\",\r\n    \"userId\":1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://jsonplaceholder.typicode.com/posts",
+                  "protocol": "https",
+                  "host": [
+                    "jsonplaceholder",
+                    "typicode",
+                    "com"
+                  ],
+                  "path": [
+                    "posts"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Chain_Step4",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "pm.environment.set('cartBody', JSON.stringify({\r",
+                      "    userId:1,\r",
+                      "    date:'2024-12-01',\r",
+                      "    products:[\r",
+                      "        {\r",
+                      "            productId:parseInt(pm.environment.get('cheapestId')),\r",
+                      "            quantity:2\r",
+                      "        }\r",
+                      "    ]\r",
+                      "    })\r",
+                      "); "
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var jsonData = pm.response.json();\r",
+                      "\r",
+                      "pm.environment.set(\"cartId\", jsonData.id.toString());"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{cartBody}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://fakestoreapi.com/carts",
+                  "protocol": "https",
+                  "host": [
+                    "fakestoreapi",
+                    "com"
+                  ],
+                  "path": [
+                    "carts"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Chain_Step3",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const jsonData = pm.response.json(); \r",
+                      "\r",
+                      "const cheapest = jsonData.reduce((a,b) => a.price < b.price ? a : b); \r",
+                      "\r",
+                      "pm.environment.set('cheapestId', cheapest.id.toString()); \r",
+                      "pm.environment.set('cheapestTitle', cheapest.title); \r",
+                      "pm.environment.set('cheapestPrice', cheapest.price.toString());\r",
+                      "\r",
+                      "pm.test(\"cheapest product price is minimum\", function() {\r",
+                      "    const isMinimum = jsonData.every(p => p.price >= parseFloat (pm.environment.get(\"cheapestPrice\"))\r",
+                      "    );\r",
+                      "    pm.expect(isMinimum).to.be.true;\r",
+                      "  }\r",
+                      ");"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://fakestoreapi.com/products",
+                  "protocol": "https",
+                  "host": [
+                    "fakestoreapi",
+                    "com"
+                  ],
+                  "path": [
+                    "products"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Chain_Step2",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Status code is 201\", function () {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "});\r",
+                      "\r",
+                      "pm.environment.set(\"storeToken\", jsonData.token);\r",
+                      "\r",
+                      "pm.test(\"Token is with eyj\", function() {\r",
+                      "    pm.expect(jsonData.token.startsWith(\"eyJ\")).to.be.true;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"storeToken is different than authToken\", function() {\r",
+                      "    const authToken = pm.environment.get(\"authToken\");\r",
+                      "    pm.expect(jsonData.token).to.not.eql(\"authToken\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"username\":\"johnd\",\r\n    \"password\":\"m38rmF$\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://fakestoreapi.com/auth/login",
+                  "protocol": "https",
+                  "host": [
+                    "fakestoreapi",
+                    "com"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Chain_Step1",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Capture token in authToken variable\", function() {\r",
+                      "    pm.environment.set(\"authToken\", pm.response.json().token);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{xApiKey}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\":\"eve.holt@reqres.in\",\r\n    \"password\":\"cityslicka\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://reqres.in/api/login",
+                  "protocol": "https",
+                  "host": [
+                    "reqres",
+                    "in"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Country_Weather",
+          "item": [
+            {
+              "name": "Chain_Step1",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const jsonData = pm.response.json()[0];\r",
+                      "\r",
+                      "pm.environment.set(\"capitalCity\", jsonData.capital[0]);\r",
+                      "pm.environment.set(\"germany_pop\", jsonData.population.toString());\r",
+                      "pm.environment.set(\"germany_region\", jsonData.region);\r",
+                      "\r",
+                      "pm.test(\"Check resonse jsonData\", function() {\r",
+                      "pm.expect(jsonData.name.common).to.be.eql(\"Germany\");\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Check capital\", function() {\r",
+                      "pm.expect(jsonData.capital[0]).to.be.eql(\"Berlin\");\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Check population\", function() {\r",
+                      "pm.expect(jsonData.population).to.be.above(80000000);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Check region\", function() {\r",
+                      "    pm.expect(jsonData.region).to.be.eql(\"Europe\");\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://restcountries.com/v3.1/name/germany?fields=name,capital,population,region",
+                  "protocol": "https",
+                  "host": [
+                    "restcountries",
+                    "com"
+                  ],
+                  "path": [
+                    "v3.1",
+                    "name",
+                    "germany"
+                  ],
+                  "query": [
+                    {
+                      "key": "fields",
+                      "value": "name,capital,population,region"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Chain_Step2",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();\r",
+                      "\r",
+                      "pm.expect(\"berlinTemp\", jsonData.current_weather.temperature);\r",
+                      "pm.expect(\"berlinWind\", jsonData.current_weather.windspeed);\r",
+                      "\r",
+                      "pm.test(\"Status code is 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Check tem is not null\", function() {\r",
+                      "    pm.expect(jsonData.current_weather.temperature).to.not.be.null;\r",
+                      "    pm.expect(jsonData.current_weather.temperature).to.be.a(\"number\");\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Check temp is within -30 to 50\", function(){\r",
+                      "    pm.expect(jsonData.current_weather.temperature).to.be.within(-30, 50);\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true",
+                  "protocol": "https",
+                  "host": [
+                    "api",
+                    "open-meteo",
+                    "com"
+                  ],
+                  "path": [
+                    "v1",
+                    "forecast"
+                  ],
+                  "query": [
+                    {
+                      "key": "latitude",
+                      "value": "52.52"
+                    },
+                    {
+                      "key": "longitude",
+                      "value": "13.41"
+                    },
+                    {
+                      "key": "current_weather",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Chain_Step3",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json()[0];\r",
+                      "\r",
+                      "pm.environment.set(\"tokyoCapital\", jsonData.capital[0]);\r",
+                      "pm.environment.set(\"japan_pop\", jsonData.population);\r",
+                      "\r",
+                      "pm.test(\"Check response body\", function() {\r",
+                      "    pm.expect(jsonData.name.common).to.be.eql(\"Japan\");\r",
+                      "    pm.expect(jsonData.capital[0]).to.be.eql(\"Tokyo\");\r",
+                      "    pm.expect(jsonData.population).to.be.above(100000000);\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://restcountries.com/v3.1/name/japan?fields=name,capital,population,region",
+                  "protocol": "https",
+                  "host": [
+                    "restcountries",
+                    "com"
+                  ],
+                  "path": [
+                    "v3.1",
+                    "name",
+                    "japan"
+                  ],
+                  "query": [
+                    {
+                      "key": "fields",
+                      "value": "name,capital,population,region"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Chain_Step4",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json()[0];\r",
+                      "\r",
+                      "pm.environment.set(\"brazilCapital\", jsonData.capital[0]);\r",
+                      "pm.environment.set(\"brazil_pop\", jsonData.population);\r",
+                      "\r",
+                      "pm.test(\"Check response\", function() {\r",
+                      "    pm.expect(jsonData.name.common).to.be.eql(\"Brazil\");\r",
+                      "    pm.expect(jsonData.capital[0]).to.be.eql(\"Brasília\");\r",
+                      "    pm.expect(jsonData.population).to.be.above(200000000);\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://restcountries.com/v3.1/name/brazil?fields=name,capital,population,region.",
+                  "protocol": "https",
+                  "host": [
+                    "restcountries",
+                    "com"
+                  ],
+                  "path": [
+                    "v3.1",
+                    "name",
+                    "brazil"
+                  ],
+                  "query": [
+                    {
+                      "key": "fields",
+                      "value": "name,capital,population,region."
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Chain_Step5",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "});\r",
+                      "\r",
+                      "var jsonData = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Body contains Berlin, Tokyo, Brasília\", function() {\r",
+                      "    pm.expect(jsonData.body).to.include(\"Berlin\");\r",
+                      "    pm.expect(jsonData.body).to.include(\"Tokyo\");\r",
+                      "    pm.expect(jsonData.body).to.include(\"Brasília\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"title\": \"Country Report\",\r\n  \"body\": \"Germany pop:{{germany_pop}}, Japan pop:{{japan_pop}}, Brazil pop:{{brazil_pop}}. Berlin weather:{{berlinTemp}}C wind:{{berlinWind}}. Capitals: {{capitalCity}}, {{tokyoCapital}}, {{brazilCapital}}\",\r\n  \"userId\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://jsonplaceholder.typicode.com/posts",
+                  "protocol": "https",
+                  "host": [
+                    "jsonplaceholder",
+                    "typicode",
+                    "com"
+                  ],
+                  "path": [
+                    "posts"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Cross_API_Data_Consistency_Validation",
+          "item": [
+            {
+              "name": "Step1",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();\r",
+                      "\r",
+                      "pm.environment.set(\"newProductId\", jsonData.id);\r",
+                      "\r",
+                      "pm.test(\"Status code is 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Check title\", function() {\r",
+                      "    pm.expect(jsonData.title).to.be.eql(\"Consistency Test Item\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"title\":\"Consistency Test Item\",\r\n    \"price\":42.99,\r\n    \"description\":\"Testing cross-APIconsistency\",\r\n    \"category\":\"electronics\",\r\n    \"image\":\"https://fakestoreapi.com/img/test.jpg\"\r\n }\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://fakestoreapi.com/products",
+                  "protocol": "https",
+                  "host": [
+                    "fakestoreapi",
+                    "com"
+                  ],
+                  "path": [
+                    "products"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Step2",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Status code is 200\", function () {\r",
+                      "\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Product ID is a number\", function () {\r",
+                      "\r",
+                      "    pm.expect(jsonData.id)\r",
+                      "        .to.be.a(\"number\");\r",
+                      "\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Returned title does not match created product title\", function () {\r",
+                      "\r",
+                      "    pm.expect(jsonData.title)\r",
+                      "        .to.not.eql(\r",
+                      "            pm.environment.get(\"createdProductTitle\")\r",
+                      "        );\r",
+                      "\r",
+                      "});\r",
+                      "\r",
+                      "console.log(\r",
+                      "    \"Finding: Fake Store API does not persist created products.\"\r",
+                      ");\r",
+                      "\r",
+                      "console.log(\r",
+                      "    \"Critical Integration Finding: GET by newly created product ID returns an existing simulated product instead of the created product data.\"\r",
+                      ");"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://fakestoreapi.com/products/{{newProductId}}",
+                  "protocol": "https",
+                  "host": [
+                    "fakestoreapi",
+                    "com"
+                  ],
+                  "path": [
+                    "products",
+                    "{{newProductId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Step3",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const jsonData = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Electronics count is 6\", function() {\r",
+                      "    pm.expect(jsonData.length).to.be.eql(6);\r",
+                      "});\r",
+                      "\r",
+                      "const premiumElectronics = jsonData.filter(product => product.price > 100);\r",
+                      "\r",
+                      "pm.environment.set(\"premiumElectronicsCount\", premiumElectronics.length.toString());\r",
+                      "pm.test(\"premiumElectronicsCount is greater than or equal to 0\", function () {\r",
+                      "\r",
+                      "    pm.expect(\r",
+                      "        parseInt(\r",
+                      "            pm.environment.get(\"premiumElectronicsCount\")\r",
+                      "        )\r",
+                      "    ).to.be.at.least(0);\r",
+                      "\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://fakestoreapi.com/products/category/electronics",
+                  "protocol": "https",
+                  "host": [
+                    "fakestoreapi",
+                    "com"
+                  ],
+                  "path": [
+                    "products",
+                    "category",
+                    "electronics"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Step4",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const reqresData = pm.response.json();\r",
+                      "\r",
+                      "\r",
+                      "// Assert Reqres total_pages === 2\r",
+                      "pm.test(\"Reqres total_pages is 2\", function () {\r",
+                      "\r",
+                      "    pm.expect(reqresData.total_pages)\r",
+                      "        .to.eql(2);\r",
+                      "\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "// Call JSONPlaceholder users API\r",
+                      "pm.sendRequest(\r",
+                      "    \"https://jsonplaceholder.typicode.com/users\",\r",
+                      "    function (err, res) {\r",
+                      "\r",
+                      "        const jsonPlaceholderUsers = res.json();\r",
+                      "\r",
+                      "        // Assert JSONPlaceholder length === 10\r",
+                      "        pm.test(\"JSONPlaceholder user count is 10\", function () {\r",
+                      "\r",
+                      "            pm.expect(jsonPlaceholderUsers.length)\r",
+                      "                .to.eql(10);\r",
+                      "\r",
+                      "        });\r",
+                      "\r",
+                      "        // Assert combined count === 22\r",
+                      "        pm.test(\"Combined user count across systems is 22\", function () {\r",
+                      "\r",
+                      "            const combinedCount =\r",
+                      "                reqresData.total + jsonPlaceholderUsers.length;\r",
+                      "\r",
+                      "            pm.expect(combinedCount)\r",
+                      "                .to.eql(22);\r",
+                      "\r",
+                      "        });\r",
+                      "\r",
+                      "    }\r",
+                      ");"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{xApiKey}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://reqres.in/api/users?page=1",
+                  "protocol": "https",
+                  "host": [
+                    "reqres",
+                    "in"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "pm.sendRequest()_Nested_Async_Request_Chains",
+          "item": [
+            {
+              "name": "Request_cc",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const jsonData = pm.response.json();\r",
+                      "\r",
+                      "\r",
+                      "// Assert GET /users response\r",
+                      "pm.test(\"GET /users status is 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "const firstUserEmail = jsonData.data[0].email;\r",
+                      "\r",
+                      "pm.sendRequest({\r",
+                      "\r",
+                      "    url: \"https://jsonplaceholder.typicode.com/posts\",\r",
+                      "\r",
+                      "    method: \"POST\",\r",
+                      "\r",
+                      "    header: {\r",
+                      "        \"Content-Type\": \"application/json\"\r",
+                      "    },\r",
+                      "\r",
+                      "    body: {\r",
+                      "        mode: \"raw\",\r",
+                      "        raw: JSON.stringify({\r",
+                      "            title: \"User Email: \" + firstUserEmail,\r",
+                      "            body: \"Created from Reqres user data\",\r",
+                      "            userId: 1\r",
+                      "        })\r",
+                      "    }\r",
+                      "\r",
+                      "}, function (err, res) {\r",
+                      "\r",
+                      "    // Assert inner POST status 201\r",
+                      "    pm.test(\"Inline POST request returned 201\", function () {\r",
+                      "\r",
+                      "        pm.expect(res.code)\r",
+                      "            .to.eql(201);\r",
+                      "\r",
+                      "    });\r",
+                      "\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{xApiKey}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users?page=1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Request_DD",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "pm.sendRequest({\r",
+                      "\r",
+                      "    url: pm.environment.get(\"baseUrl\") + \"/api/login\",\r",
+                      "\r",
+                      "    method: \"POST\",\r",
+                      "\r",
+                      "    header: {\r",
+                      "        \"Content-Type\": \"application/json\",\r",
+                      "        \"x-api-key\": \"reqres-free-v1\"\r",
+                      "    },\r",
+                      "\r",
+                      "    body: {\r",
+                      "        mode: \"raw\",\r",
+                      "        raw: JSON.stringify({\r",
+                      "            email: \"eve.holt@reqres.in\",\r",
+                      "            password: \"cityslicka\"\r",
+                      "        })\r",
+                      "    }\r",
+                      "\r",
+                      "}, function (err, res) {\r",
+                      "\r",
+                      "    if (err) {\r",
+                      "        console.log(\"Login request failed\", err);\r",
+                      "        return;\r",
+                      "    }\r",
+                      "\r",
+                      "    const jsonData = res.json();\r",
+                      "\r",
+                      "    pm.variables.set(\r",
+                      "        \"freshToken\",\r",
+                      "        jsonData.token\r",
+                      "    );\r",
+                      "\r",
+                      "    console.log(\"freshToken created\");\r",
+                      "\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"GET /users/2 returned 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "var jsonData = pm.response.json();\r",
+                      "\r",
+                      "\r",
+                      "// Teardown request\r",
+                      "pm.sendRequest({\r",
+                      "\r",
+                      "    url: \"https://jsonplaceholder.typicode.com/posts\",\r",
+                      "    method: \"POST\",\r",
+                      "    header: {\r",
+                      "        \"Content-Type\": \"application/json\"\r",
+                      "    },\r",
+                      "    body: {\r",
+                      "        mode: \"raw\",\r",
+                      "        raw: JSON.stringify({\r",
+                      "            title: \"Teardown Log\",\r",
+                      "            body: \"User email: \" + jsonData.data.email,\r",
+                      "            userId: 1\r",
+                      "        })\r",
+                      "    }\r",
+                      "}, function (err, res) {\r",
+                      "    if (err) {\r",
+                      "        console.log(\"Teardown request failed:\", err);\r",
+                      "        return;\r",
+                      "    }\r",
+                      "    pm.test(\"Teardown POST returned 201\", function () {\r",
+                      "        pm.expect(res.code).to.eql(201);\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{xApiKey}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\":\"eve.holt@reqres.in\",\r\n    \"password\":\"cityslicka\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "2"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Request_EE",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Price alert requests count should match expensive products count\", function (done) {\r",
+                      "\r",
+                      "    const products = pm.response.json();\r",
+                      "\r",
+                      "    // Filter products with price > 500\r",
+                      "    const expensiveProducts = products.filter(product => product.price > 500);\r",
+                      "\r",
+                      "    let sendRequestCount = 0;\r",
+                      "    let completedRequests = 0;\r",
+                      "\r",
+                      "    // If no expensive products found\r",
+                      "    if (expensiveProducts.length === 0) {\r",
+                      "        pm.expect(sendRequestCount).to.eql(0);\r",
+                      "        done();\r",
+                      "        return;\r",
+                      "    }\r",
+                      "\r",
+                      "    expensiveProducts.forEach((product, index) => {\r",
+                      "\r",
+                      "        pm.sendRequest({\r",
+                      "            url: \"https://jsonplaceholder.typicode.com/posts/1\",\r",
+                      "            method: \"GET\"\r",
+                      "        }, function (err, res) {\r",
+                      "\r",
+                      "            pm.test(`Price alert API call successful for product ${index + 1}`, function () {\r",
+                      "                pm.expect(err).to.equal(null);\r",
+                      "                pm.expect(res.code).to.equal(200);\r",
+                      "            });\r",
+                      "\r",
+                      "            sendRequestCount++;\r",
+                      "            completedRequests++;\r",
+                      "\r",
+                      "            console.log(`Triggered alert for: ${product.title}`);\r",
+                      "\r",
+                      "            // Final assertion after all requests complete\r",
+                      "            if (completedRequests === expensiveProducts.length) {\r",
+                      "\r",
+                      "                pm.test(\"Expensive products count matches sendRequest calls\", function () {\r",
+                      "                    pm.expect(sendRequestCount).to.eql(expensiveProducts.length);\r",
+                      "                });\r",
+                      "\r",
+                      "                console.log(\"Products with price > 500:\", expensiveProducts.length);\r",
+                      "                console.log(\"sendRequest calls made:\", sendRequestCount);\r",
+                      "\r",
+                      "                done();\r",
+                      "            }\r",
+                      "        });\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://fakestoreapi.com/products",
+                  "protocol": "https",
+                  "host": [
+                    "fakestoreapi",
+                    "com"
+                  ],
+                  "path": [
+                    "products"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Request_FF",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"3-Level Nested Async Request Chain\", function (done) {\r",
+                      "\r",
+                      "    // LEVEL 1: Validate outer request response\r",
+                      "    const products = pm.response.json();\r",
+                      "\r",
+                      "    pm.test(\"Level 1 - Products API response is successful\", function () {\r",
+                      "        pm.response.to.have.status(200);\r",
+                      "        pm.expect(products).to.be.an(\"array\");\r",
+                      "        pm.expect(products.length).to.be.above(0);\r",
+                      "    });\r",
+                      "\r",
+                      "    console.log(\"Level 1 completed: Products fetched\");\r",
+                      "\r",
+                      "    // LEVEL 2: Create a new post\r",
+                      "    pm.sendRequest({\r",
+                      "        url: \"https://jsonplaceholder.typicode.com/posts\",\r",
+                      "        method: \"POST\",\r",
+                      "        header: {\r",
+                      "            \"Content-Type\": \"application/json\"\r",
+                      "        },\r",
+                      "        body: {\r",
+                      "            mode: \"raw\",\r",
+                      "            raw: JSON.stringify({\r",
+                      "                title: \"Postman Nested Request\",\r",
+                      "                body: \"Testing callback nesting\",\r",
+                      "                userId: 1\r",
+                      "            })\r",
+                      "        }\r",
+                      "    }, function (err1, res1) {\r",
+                      "\r",
+                      "        // Assertions for Level 2\r",
+                      "        pm.test(\"Level 2 - Create Post request successful\", function () {\r",
+                      "            pm.expect(err1).to.equal(null);\r",
+                      "            pm.expect(res1.code).to.equal(201);\r",
+                      "        });\r",
+                      "\r",
+                      "        const createdPost = res1.json();\r",
+                      "\r",
+                      "        pm.test(\"Level 2 - Created post contains ID\", function () {\r",
+                      "            pm.expect(createdPost).to.have.property(\"id\");\r",
+                      "        });\r",
+                      "\r",
+                      "        console.log(\"Level 2 completed: Post created with ID =\", createdPost.id);\r",
+                      "\r",
+                      "        // LEVEL 3: Fetch the created post by ID\r",
+                      "        pm.sendRequest({\r",
+                      "            url: `https://jsonplaceholder.typicode.com/posts/${createdPost.id}`,\r",
+                      "            method: \"GET\"\r",
+                      "        }, function (err2, res2) {\r",
+                      "\r",
+                      "            // Assertions for Level 3\r",
+                      "            pm.test(\"Level 3 - Get Post by ID successful\", function () {\r",
+                      "                pm.expect(err2).to.equal(null);\r",
+                      "                pm.expect(res2.code).to.equal(200);\r",
+                      "            });\r",
+                      "\r",
+                      "            const fetchedPost = res2.json();\r",
+                      "\r",
+                      "            pm.test(\"Level 3 - Retrieved post has correct ID\", function () {\r",
+                      "                pm.expect(fetchedPost.id).to.eql(createdPost.id);\r",
+                      "            });\r",
+                      "\r",
+                      "            console.log(\"Level 3 completed: Retrieved post ID =\", fetchedPost.id);\r",
+                      "\r",
+                      "            done();\r",
+                      "        });\r",
+                      "    });\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://fakestoreapi.com/products",
+                  "protocol": "https",
+                  "host": [
+                    "fakestoreapi",
+                    "com"
+                  ],
+                  "path": [
+                    "products"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Phase4",
+      "item": []
+    },
+    {
+      "name": "Phase5",
+      "item": []
+    }
+  ]
+}
