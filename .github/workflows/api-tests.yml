@@ -37,8 +37,8 @@ jobs:
 
       - name: Run Phase 1 API Tests
         run: |
-          newman run ./tests/phase1.postman_collection.json \
-            -e ./tests/assessment-dev.postman_environment.json \
+          newman run ./tests/Phase_1.postman_collection.json \
+            -e ./tests/Assessment_Dev.postman_environment.json \
             --env-var 'baseUrl=${{ secrets.REQRES_BASE_URL }}' \
             --reporters cli,htmlextra \
             --reporter-htmlextra-export ./reports/api-report.html \
