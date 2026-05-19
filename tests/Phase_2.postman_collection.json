@@ -397,65 +397,6 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "Request_S",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "const jsonData = pm.response.json();\r",
-                  "\r",
-                  "const expectedStatus = Number(pm.iterationData.get(\"expectedStatus\"));\r",
-                  "const expectedCategory = pm.iterationData.get(\"expectedCategory\");\r",
-                  "const isPrimium = pm.iterationData.get(\"isPrimium\");\r",
-                  "\r",
-                  "pm.test(\"Status code matches CSV data\", function() {\r",
-                  "    pm.expect(pm.response.code).to.eql(expectedStatus);\r",
-                  "});\r",
-                  "\r",
-                  "if(expectedCategory !== \"\") {\r",
-                  "    pm.test(\"Category matches expected value\", function() {\r",
-                  "        pm.expect(jsonData.category).to.eql(expectedCategory);\r",
-                  "    });\r",
-                  "}\r",
-                  "\r",
-                  "if(isPrimium === true){\r",
-                  "    pm.test(\"Primium product price is greater than 100\", function(){\r",
-                  "        pm.expect(jsonData.price).to.be.above(100);\r",
-                  "    });\r",
-                  "}\r",
-                  "\r",
-                  "if(isPrimium === false && expectedCategory !== \"\"){\r",
-                  "    pm.test(\"price must be greater than 100\", function() {\r",
-                  "        pm.expect(jsonData.price).to.be.at.most(100);\r",
-                  "    });\r",
-                  "}"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "https://fakestoreapi.com/products/{{productId}}",
-              "protocol": "https",
-              "host": [
-                "fakestoreapi",
-                "com"
-              ],
-              "path": [
-                "products",
-                "{{productId}}"
-              ]
-            }
-          },
-          "response": []
         }
       ]
     }
